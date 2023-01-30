@@ -1,0 +1,599 @@
+---
+title: "Reproduzierbare Analysen mit dem Open Source Statistikprogramm jamovi"
+subtitle:  "Klausur Ausbildung und F+E (14.02.2023)"
+author: "Bruno Rütsche"
+format: 
+  revealjs:
+    incremental: true
+    transition-speed: fast
+    theme: [default, resources/custom.scss]
+    logo: resources/phsz_logo_kurz_sw.jpg
+    title-slide-attributes: 
+      data-background-image: resources/phsz_Logo_lang_sw.jpg
+      data-background-size: 30%
+      data-background-position: 2% 2%
+    footer: "Reproduzierbare Analysen mit Jamovi"
+    slide-number: true
+    show-slide-number: all
+    menu:
+      side: right
+      width: wide
+    #embed-resources: true
+    chalkboard: true
+    scrollable: true
+toc: true
+toc-depth: 1
+number-sections: false
+toc-title: "Inhalt"
+editor: visual
+#bibliography: references.bib
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+#| label: setup
+#| include: false
+rm(list = ls())
+options(scipen=100)
+options(digits=3)
+options(contrasts=c('contr.sum', 'contr.poly'))
+
+# Set working directory
+dirBase = "/Users/br/Documents/teaching/workshop-jamovi"
+setwd(dirBase)
+
+# Load packages
+library(tidyverse)
+library(ggplot2)
+library(MASS)
+library(jtools)
+library(writexl)
+library(ggforce)
+
+library(conflicted)
+conflict_prefer("select", "dplyr")
+conflict_prefer("filter", "dplyr")
+conflict_prefer("mutate", "dplyr")
+
+# Set seed
+set.seed(42)
+```
+
+```{r}
+#| label: generate-dataset
+#| include: false
+
+
+# Generate dataset ----
+if (FALSE) {
+  N <- 120
+  subject <- 1:N
+  group <- rep(0:1, each = N/2)
+  #gender <- as.numeric(rbernoulli(N, 0.45))
+  
+  # Columns: lt_pre, lt_post, lt_followup, mot1, mot2, mot3
+  # Use mean == 0 and variance == 1 (correlations); both are added later separately for the groups.
+  varNames <- c("lt_pre", "lt_post", "lt_followup", "mot_1", "mot_2", "mot_3", "mot_4", "mot_5")
+  corMat <- matrix(data =  c(1.00, 0.35, 0.35, 0.15, 0.15, 0.15, 0.15, 0.15,
+                             0.35, 1.00, 0.50, 0.15, 0.15, 0.15, 0.15, 0.15,
+                             0.35, 0.50, 1.00, 0.15, 0.15, 0.15, 0.15, 0.15,
+                             0.15, 0.15, 0.15, 1.00, 0.30, 0.30, 0.30, 0.30,
+                             0.15, 0.15, 0.15, 0.30, 1.00, 0.30, 0.30, 0.30,
+                             0.15, 0.15, 0.15, 0.30, 0.30, 1.00, 0.30, 0.30,
+                             0.15, 0.15, 0.15, 0.30, 0.30, 0.30, 1.00, 0.30,
+                             0.15, 0.15, 0.15, 0.30, 0.30, 0.30, 0.30, 1.00
+                             ),
+                  nrow = length(varNames), ncol = length(varNames), byrow = TRUE, dimnames = list(varNames, varNames))
+  tmp <- mvrnorm(n = N, mu = rep(0, ncol(corMat)), Sigma = corMat) 
+  
+  unstand <- function(x, m, sd) {
+    #x <- df$lt_pre
+    #m <- c(15.5, 16.1)
+    #sd <- c(2.9, 3.1)
+    x <- x*rep(sd, each = N/2) + rep(m, each = N/2)
+  } 
+
+df <- tibble(subject, group) %>% 
+    bind_cols(tmp) %>%
+    mutate(lt_pre = unstand(lt_pre, c(18.3, 18.1), c(3.1, 3.0)),
+           lt_post = unstand(lt_post, c(20.1, 22.2), c(2.9, 3.1)),
+           lt_followup = unstand(lt_followup, c(19.2, 21.5), c(3.0, 3.1)),
+           mot_1 = unstand(mot_1, c(3.3, 3.5), c(1.1, 0.9)),
+           mot_2 = unstand(mot_2, c(3.4, 3.6), c(1.0, 1.1)),
+           mot_3 = unstand(mot_3, c(3.4, 3.3), c(1.1, 0.9)),
+           mot_4 = unstand(mot_4, c(3.2, 3.3), c(1.0, 0.9)),
+           mot_5 = unstand(mot_5, c(3.6, 3.3), c(1.0, 1.1)),
+           subject = factor(subject),
+           #gender = factor(gender, labels = c("female", "male")),
+           group = factor(group, labels = c("Kontroll", "Treatment"))
+           ) %>%
+    # Round to integer
+    mutate(across(lt_pre:mot_5, ~as.integer(.))) %>%
+    # Set min and max values
+    mutate(across(lt_pre:mot_5, ~ifelse(. < 0, 0, .)),
+           across(lt_pre:lt_followup, ~ifelse(. > 30, 30, .)),
+           across(mot_1:mot_5, ~ifelse(. > 5, 5, .))) %>% 
+    # Remove some subjects
+    filter(!subject %in% c(11, 22,
+                           55, 66, 77)) %>% 
+    # Add missing values
+    mutate(lt_pre = lt_pre,
+           lt_post = ifelse(subject %in% sample(1:N, 2), NA, lt_post),
+           lt_followup = ifelse(subject %in% sample(1:N, 4), NA, lt_followup),
+           mot_1 = ifelse(subject %in% sample(1:N, 2), NA, mot_1),
+           mot_2 = ifelse(subject %in% sample(1:N, 3), NA, mot_2),
+           mot_3 = ifelse(subject %in% sample(1:N, 3), NA, mot_3),
+           mot_4 = ifelse(subject %in% sample(1:N, 2), NA, mot_4),
+           mot_5 = ifelse(subject %in% sample(1:N, 2), NA, mot_5)) %>%
+    # Add outliers
+    mutate(subjectSel1 = ifelse(subject %in% sample(subject, 1), TRUE, FALSE),     # First random subject
+           subjectSel2 = ifelse(subject %in% sample(subject, 1), TRUE, FALSE),     # Second random subject
+           across(lt_pre:mot_5, ~ifelse(subjectSel1 == 1, 0, .)),     # Set values 0 in all variables for first random subject
+           across(lt_pre:mot_5, ~ifelse(subjectSel2 == 1, 0, .))) %>% # Set values 0 in all variables for second random subject
+    select(-contains("subjectSel")) %>%
+    ungroup()
+
+  # Check data
+  df %>%
+    group_by(group) %>%
+    summarize(N = n(),
+              across(lt_pre:mot_5, ~mean(., na.rm = TRUE)))
+  
+  cor(df %>%
+        filter(lt_pre > 0) %>% # Remove outlier
+        select(lt_pre:mot_5),
+      use = "pairwise.complete.obs")
+  
+  psych::alpha(df %>% 
+                 filter(lt_pre > 0) %>% # Remove outlier
+                 select(mot_1:mot_5))
+  
+  # Save data
+  write_xlsx(df %>% 
+              mutate(across(where(is.factor), ~as.numeric(.))), 
+              file.path("data", "data.xlsx"))
+  saveRDS(df, file.path("data", "data.rds"))
+}
+
+# Read data
+df <- readRDS(file.path("data", "data.rds"))
+```
+
+```{r}
+#| include: false
+dfp <- df %>%
+  pivot_longer(lt_pre:lt_followup, names_to = "var", values_to = "val") %>%
+  mutate(var = factor(var, levels = c("lt_pre", "lt_post", "lt_followup")))
+ggplot(dfp, aes(x = var, y = val, color = group)) +
+  geom_boxplot(position = position_dodge(width = 0.7), width = .2, outlier.shape = NA, coef = 0, alpha = 0.0) + 
+  geom_sina(position = position_dodge(width = 0.7), alpha = .15) +
+  geom_violin(position = position_dodge(width = 0.7), alpha = .0, trim = FALSE) +
+  theme_apa() +
+  scale_colour_grey() +
+  labs(x = "", y = "Sum")
+```
+
+```{r}
+#| include: false
+dfp <- df %>%
+  pivot_longer(mot_1:mot_3, names_to = "var", values_to = "val")
+ggplot(dfp, aes(x = var, y = val, color = group)) +
+  geom_boxplot(position = position_dodge(width = 0.7), width = .2, outlier.shape = NA, coef = 0, alpha = 0.0) + 
+  geom_sina(position = position_dodge(width = 0.7), alpha = .15) +
+  geom_violin(position = position_dodge(width = 0.7), alpha = .0, trim = FALSE) +
+  theme_apa() +
+  scale_colour_grey() +
+  labs(x = "", y = "Sum")
+```
+
+# Einführung
+
+## Jamovi
+
+![](resources/jamovi-logo.png){fig-align="center" width="50%"}
+
+-   [Jamovi](https://www.jamovi.org/) ist ein Spreadsheet-Programm zur statistischen Analyse ähnlich zu SPSS
+
+-   Vorteile: Open Source, kostenfrei, integrierte Dokumentation, modernes GUI, Integration mit R
+
+-   Nachteile: "jung", reduzierte Funktionalität (aber: Plugins, Integration mit R)
+
+-   Installation: <https://www.jamovi.org/user-manual.html#installation>
+
+::: notes
+Flexiblilität von R: heutiger Datensatz, alle Plots, die Slides alles in R erstellt
+:::
+
+## GUI
+
+<br/>
+
+Kurze Demonstration...
+
+::: notes
+<!-- ::: r-stack -->
+
+<!-- ![](resources/gui.png){.fragment fig-align="center"} -->
+
+<!-- ::: {.rstack .fragment .absolute} -->
+
+<!-- ::: {.highlightbox .absolute width="1040" height="60"} -->
+
+<!-- ::: highlighttext -->
+
+<!-- Menu -->
+
+<!-- ::: -->
+
+<!-- ::: -->
+
+<!-- ::: -->
+
+<!-- ::: {.rstack .fragment .absolute} -->
+
+<!-- ::: {.highlightbox .absolute top="62" width="500" height="510"} -->
+
+<!-- ::: highlighttext -->
+
+<!-- Spreadsheet -->
+
+<!-- ::: -->
+
+<!-- ::: -->
+
+<!-- ::: -->
+
+<!-- ::: {.rstack .fragment .absolute} -->
+
+<!-- ::: {.highlightbox .absolute top="62" left="502" width="538" height="510"} -->
+
+<!-- ::: highlighttext -->
+
+<!-- Output -->
+
+<!-- ::: -->
+
+<!-- ::: -->
+
+<!-- ::: -->
+
+<!-- ::: -->
+
+Variablen
+
+-   "+" um neue Variablen hinzuzufügen (ID, Gruppe nominal Gruppe A, Gruppe B, Gruppe C, Testwert kontinuierlich)
+
+-   "Bearbeiten" (oder Doppelklick auf Variable), um Variablen-Information zu bearbeiten
+
+Daten
+
+-   Dateneingabe direkt ins Spreadsheet (ID: 1, 2, 3, Gruppe: 2, 1, 3, Testwert: 15, 20, 30)
+
+-   Reihen und Spalten hinzufügen / löschen (via Menu oder Rechtsklick)
+
+-   Kopieren und Einfügen (via Menu oder Rechtsklick)
+
+-   "Bearbeiten" (oder Doppelklick auf Variable), um Variablen-Information zu bearbeiten
+
+Hamburger-Menu, Options-Menu
+:::
+
+## Datenformat
+
+-   Pro "Subject" eine Zeile
+
+-   Pro Variable eine Spalte
+
+-   Konsistente Benennung der Variablen (keine Leerschläge, sondern z.B. "lt_pre", lt_post", ...)
+
+-   Erfassung: Direkt in Jamovi, Excel (.xlsx) oder Textfile (.csv)
+
+-   Excel: Formatierungen / Farben != einlesbare Daten → alles explizit als Variablen aufführen
+
+## Datensatz {#sec-datensatz .smaller}
+
+::: columns
+::: {.column .nonincremental width="65%"}
+-   Simulierter Datensatz (N = `r nrow(df)`)
+
+-   subject
+
+    -   Beschreibung: eindeutige Identifikationsnummer der Teilnehmenden
+
+    -   Skala: Nominal (ID)
+
+    -   Ausprägung: 1 - 120
+
+-   group
+
+    -   Beschreibung: Gruppe
+
+    -   Skala: Nominal
+
+    -   Ausprägungen: 1 == "Kontroll", 2 == "Treatment"
+:::
+
+::: {.column width="35%"}
+![](resources/datensatz.png)
+:::
+:::
+
+## Datensatz {.smaller visibility="uncounted"}
+
+<!-- -   gender -->
+
+<!--     -   Beschreibung: biologisches Geschlecht -->
+
+<!--     -   Skala: Nominal -->
+
+<!--     -   Ausprägungen: 1 == "männlich", 2 == "weiblich" -->
+
+::: columns
+::: {.column .nonincremental width="65%"}
+-   lt_pre, lt_post, lt_followup
+
+    -   Beschreibung: (L)ern(T)test Prä, Post oder Follow-Up
+
+    -   Skala: Kontinuierlich
+
+    -   Ausprägungen: 0 - 30
+
+-   mot_1 - mot_5
+
+    -   Beschreibung: Motivationskala Item 1 - 5
+
+    -   Skala: Kontinuierlich
+
+    -   Ausprägungen: 0 - 5
+:::
+
+::: {.column width="35%"}
+![](resources/datensatz.png)
+:::
+:::
+
+## Ablauf
+
+-   keine Statistikeinführung, sondern eigenständiges "Hands-On"
+
+-   Aufgaben, Hinweise und Video-Lösungen
+
+-   Bei Fragen bitte melden.
+
+. . .
+
+# Hands-On
+
+## Datensatz vorbereiten
+
+::: {.callout-note icon="false"}
+### Aufgabe
+
+Importiere die Excel-Datei "data.xlsx" in Jamovi, setze Beschreibungen, Skalentypen und Stufen aller Variablen und speichere den Datensatz.
+:::
+
+. . .
+
+::: {.callout-tip icon="false"}
+### Hinweise
+
+-   Die Beschreibungen, Skalentypen und Stufen zu den einzelnen Variablen befinden sich auf Folie 7.
+
+-   Bei der Variablensicht können auch mehrere Variablen angewählt und bearbeitet werden (z.B. um das Skalenniveau anzupassen).
+:::
+
+## Datensatz vorbereiten {visibility="uncounted"}
+
+{{< video resources/datensatz.mp4 >}}
+
+## Deskriptive Statistiken
+
+::: {.callout-note icon="false"}
+### Aufgabe
+
+Erstelle für die Variablen **lt_pre, lt_post, lt_followup und mot_1 - mot_5** eine Tabelle mit **deskriptiven Statistiken** (Standardeinstellung plus *Modalwert*) sowie ein **Box-Plots (inkl. Ausreisser, Violin-Plot und Daten)**.
+:::
+
+. . .
+
+::: {.callout-tip icon="false"}
+### Hinweise
+
+-   Mit der "Shift"-Taste können mehrere Variablen markiert werden.
+
+-   Variablen können per Drag-and-Drop oder über die Pfeil-Schaltflächen in die Auswahlboxen verschoben werden.
+:::
+
+## Deskriptive Statistiken {visibility="uncounted"}
+
+{{< video resources/deskriptive-analyse-edited.mp4 >}}
+
+## Filter
+
+::: {.callout-note icon="false"}
+### Aufgabe
+
+Die Teilnehmenden in Reihe 13 und 67 wurde als Ausreisser gekennzeichnet. Dies allein wäre noch kein Grund für einen Ausschluss. Glücklicherweise bestätigt ein Blick in das fiktive Messprotokoll, dass diese beiden Teilnehmenden bereits bei der Datenerhebung aufgefallen sind (Abgabe des Tests nach 1 min).
+
+Erstelle deswegen einen Filter, der diese Teilnehmenden aus allen weiteren Analysen ausschliesst.
+:::
+
+## Filter {visibility="uncounted"}
+
+{{< video resources/filter-edited.mp4 >}}
+
+## Korrelationen
+
+::: {.callout-note icon="false"}
+### Aufgabe
+
+Erstelle eine Korrelationstabelle der Variablen **mot_1 - mot_5** (ohne Signifikanzniveau, dafür mit Signifikanzsternchen).
+
+Führe eine Reliabilitätsanalyse der gleichen Variablen durch, betrachte das Cronbach α und lasse eine Korrelations-Heatmap ausgeben.
+:::
+
+## Korrelationen {visibility="uncounted"}
+
+{{< video resources/korrelationen.mp4 >}}
+
+## Daten transformieren: Mittelwert
+
+::: {.callout-note icon="false"}
+### Aufgabe
+
+Die Reliabilität der Items **mot_1 - mot_5** hat sich als akzeptabel herausgestellt (Cronbach α \> 0.70). Erstelle deshalb pro "Subject" den Mittelwert über aller Motivations-Items. Nenne die neue Variable **"mot"**.
+:::
+
+. . .
+
+::: {.callout-tip icon="false"}
+### Hinweise
+
+Der Skalenmittelwert liesse sich auch direkt bei der Reliabilitätsanalyse speichern.
+:::
+
+## Daten transformieren: Mittelwert {visibility="uncounted"}
+
+{{< video resources/mittelwert-edited.mp4 >}}
+
+## Daten transformieren: z-Standardisierung
+
+::: {.callout-note icon="false"}
+### Aufgabe
+
+Führe eine **z-Standardisierung** (Mittelwert: 0, Standardbweichung: 1) der Variable **"mot"** durch. Nenne die neue Variable **"mot_z"**.
+:::
+
+## Daten transformieren: z-Standardisierung {visibility="uncounted"}
+
+{{< video resources/zstand.mp4 >}}
+
+## t-Test
+
+::: {.callout-note icon="false"}
+### Aufgabe
+
+Vergleiche die beiden Gruppen in den Variablen **lt_pre, lt_post, lt_post und mot_z** mittels einem **t-Test für unabhängige Stichproben**.
+
+Lass die **Effektstärke** als zusätzliche Statistik ausgeben und führe den **Homogenitäts und Normalverteilungs-Test** durch.
+:::
+
+. . .
+
+::: {.callout-tip icon="false"}
+### Hinweise
+
+Kleiner Seitenhieb: In SPSS lassen sich Effektstärken bei t-Tests bis heute nicht ohne Weiteres berechnen.
+:::
+
+## t-Test {visibility="uncounted"}
+
+{{< video resources/t-test.mp4 >}}
+
+## Dokumentation
+
+::: {.callout-note icon="false"}
+### Aufgabe
+
+Dokumentiere den Output der eben durchgeführten t-Tests für unabhängige Stichproben. Kopiere die Tabelle mit den p-Werten in einem Microsoft-Word-Dokument.
+:::
+
+. . .
+
+::: {.callout-tip icon="false"}
+### Hinweise
+
+::: columns
+::: column
+-   Einzelne oder alle Analysen können über via Rechtsklick \> Löschen kopiert, exportiert und entfernt werden.
+-   Bestehende Titel können editiert werden
+:::
+
+::: column
+![](resources/output-loeschen.png){fig-align="center"}
+:::
+:::
+:::
+
+<!-- Normalverteilung bei allen Variablen in Ordnung (alle p's > 0.05) -->
+
+<!-- Homogenität der Varianz verletzt bei lt_followup und mot_z (p < 0.05) -> Welch t-Test für ungleiche Varianzen durchführen -->
+
+## Dokumentation {visibility="uncounted"}
+
+{{< video resources/dokumentation-edited.mp4 >}}
+
+## ANOVA
+
+::: {.callout-note icon="false"}
+### Aufgabe
+
+Führe eine **"mixed" ANOVA (in Jamovi: "ANOVA mit Messwiederholung")** mit dem **Innersubjekt-Faktor "time"** (lt_pre, lt_post, lt_followup), dem **Zwischensubject-Faktor "group"** und der **Kovariate "mot_z"** durch.
+
+Lass die **partielle η^2^** als Effektstärke ausgeben, führe **Posthoc-Tests der time x group Interaktion** durch und stelle die geschätzten Randmittel in einem **time x group-Diagramm** (inkl. beobachteter Werte) dar.
+:::
+
+## ANOVA {visibility="uncounted"}
+
+{{< video resources/anova-edited.mp4 >}}
+
+## Plugins
+
+::: {.callout-note icon="false"}
+### Aufgabe
+
+Jamovi verfügt über unzählige von der Community entwickelte Module (Plugins), welche die Funktionalität erweitern.
+
+Installiere das Plugin **"flexplot"** und erstelle einen **Scatterplot zwischen lt_pre und lt_post**. Entferne das dargestellte Konfidenzintervall und ändere den Linientyp zu "Regression".
+:::
+
+## Plugins {visibility="uncounted"}
+
+{{< video resources/flexplot.mp4 >}}
+
+# Abschluss
+
+## Reproduzierbarkeit I
+
+-   Open Source: Berechnungen von Werten sind offen dokumentiert und nachvollziehbar.
+
+-   Kostenfrei: Keine Lizenzen notwendig
+
+-   Plattformunabhängig (Windows, macOS, Linux)
+
+-   Dokumentationsmöglichkeit direkt in der Software
+
+## Reproduzierbarkeit II
+
+-   R als Basis: "Syntax"-Modus zeigt Syntax, welche nach R kopiert und ausgeführt werden kann (auch ohne Jamovi-Oberfläche)
+
+. . .
+
+![](resources/syntaxmodus.png){fig-align="center" width="40%"}
+
+## Weitere Plugins
+
+-   Bayes (jsq, Port von JASP)
+
+-   Power-Analysen (jpower)
+
+-   psychometrische Analysen (snowIRT, psychoPPA)
+
+-   R-Editor innerhalb von Jamovi (Rj): Möglichkeit zu feinkörnigen Analysen und Darstellungen ohne Jamovi verlassen zu müssen
+
+-   usw.
+
+## Weitere Ressourcen
+
+-   User Manual: <https://www.jamovi.org/user-manual.html>
+
+-   Einführungsbuch in die Statistik mit Jamovi: <https://www.learnstatswithjamovi.com/>
+
+## Vielen Dank für die Mitarbeit!
+
+. . .
+
+<br/> <br/>
+
+Fragen? → [bruno.ruetsche\@phsz.ch](mailto:bruno.ruetsche@phsz.ch){.email}
