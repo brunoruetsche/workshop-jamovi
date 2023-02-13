@@ -359,7 +359,7 @@ Bruno Rütsche
 <h2>Jamovi</h2>
 
 <img data-src="resources/jamovi-logo.png" style="width:50.0%" class="r-stretch quarto-figure-center"><ul>
-<li class="fragment"><p><a href="https://www.jamovi.org/">Jamovi</a> ist ein Spreadsheet-Programm zur statistischen Analyse ähnlich zu SPSS</p></li>
+<li class="fragment"><p><a href="https://www.jamovi.org/">Jamovi</a> ist ein Spreadsheet-Programm zur Durchführung von statistischenjam Analyse ähnlich zu SPSS</p></li>
 <li class="fragment"><p>Vorteile: Open Source, kostenfrei, integrierte Dokumentation, modernes GUI, Integration mit R</p></li>
 <li class="fragment"><p>Nachteile: “jung”, reduzierte Funktionalität (aber: Plugins, Integration mit R)</p></li>
 <li class="fragment"><p>Installation: <a href="https://www.jamovi.org/user-manual.html#installation" class="uri">https://www.jamovi.org/user-manual.html#installation</a></p></li>
@@ -407,6 +407,7 @@ Bruno Rütsche
 <!-- ::: -->
 <!-- ::: -->
 <!-- ::: -->
+<p>Aufbau GUI - Spreadsheet, Output, Menu, Hamburger-Menu, Settings</p>
 <p>Variablen</p>
 <ul>
 <li><p>“+” um neue Variablen hinzuzufügen (ID, Gruppe nominal Gruppe A, Gruppe B, Gruppe C, Testwert kontinuierlich)</p></li>
@@ -496,8 +497,9 @@ Bruno Rütsche
 <section id="ablauf" class="slide level2">
 <h2>Ablauf</h2>
 <ul>
-<li class="fragment"><p>keine Statistikeinführung, sondern eigenständiges “Hands-On”</p></li>
+<li class="fragment"><p>eigenständiges “Hands-On”</p></li>
 <li class="fragment"><p>Aufgaben, Hinweise und Video-Lösungen</p></li>
+<li class="fragment"><p>keine Statistikeinführung (Literaturempfehlung am Schluss)</p></li>
 <li class="fragment"><p>Bei Fragen bitte melden.</p></li>
 </ul>
 </section></section>
@@ -506,15 +508,15 @@ Bruno Rütsche
 <h1>Hands-On</h1>
 
 </section>
-<section id="datenfile-vorbereiten" class="slide level2">
-<h2>Datenfile vorbereiten</h2>
+<section id="datensatz-vorbereiten" class="slide level2">
+<h2>Datensatz vorbereiten</h2>
 <div class="callout callout-note no-icon callout-captioned callout-style-default">
 <div class="callout-body">
 <div class="callout-caption">
 <p><strong>Aufgabe</strong></p>
 </div>
 <div class="callout-content">
-<p>Importiere die Excel-Datei “data.xlsx” in Jamovi, setze Beschreibungen, Skalentypen und Stufen aller Variablen und speichere den Datensatz.</p>
+<p>Importiere die Excel-Datei “data.xlsx” in Jamovi, setze Beschreibungen, Skalentypen und Stufen aller Variablen und speichere es als Jamovi-Datei (*.omv).</p>
 </div>
 </div>
 </div>
@@ -534,7 +536,7 @@ Bruno Rütsche
 </div>
 </div>
 </section>
-<section id="datensatz-vorbereiten" class="slide level2" data-visibility="uncounted">
+<section id="datensatz-vorbereiten-1" class="slide level2" data-visibility="uncounted">
 <h2>Datensatz vorbereiten</h2>
 <video id="video_shortcode_videojs_video1" class="video-js vjs-default-skin vjs-fluid" controls="" preload="auto" data-setup="{}" title=""><source src="resources/datensatz.mp4"></video>
 </section>
@@ -546,7 +548,7 @@ Bruno Rütsche
 <p><strong>Aufgabe</strong></p>
 </div>
 <div class="callout-content">
-<p>Erstelle für die Variablen <strong>lt_pre, lt_post, lt_followup und mot_1 - mot_5</strong> eine Tabelle mit <strong>deskriptiven Statistiken</strong> (Standardeinstellung plus <em>Modalwert</em>) sowie ein <strong>Box-Plots (inkl. Ausreisser, Violin-Plot und Daten)</strong>.</p>
+<p>Erstelle für die Variablen <strong>lt_pre, lt_post, lt_followup und mot_1 - mot_5</strong> eine Tabelle mit <strong>deskriptiven Statistiken</strong> (Standardeinstellung plus <em>Modalwert</em>) sowie <strong>Box-Plots (inkl. Ausreisser, Violin-Plot und Daten)</strong>.</p>
 </div>
 </div>
 </div>
@@ -578,8 +580,8 @@ Bruno Rütsche
 <p><strong>Aufgabe</strong></p>
 </div>
 <div class="callout-content">
-<p>Die Teilnehmenden in Reihe 13 und 67 wurde als Ausreisser gekennzeichnet. Dies allein wäre noch kein Grund für einen Ausschluss. Glücklicherweise bestätigt ein Blick in das fiktive Messprotokoll, dass diese beiden Teilnehmenden bereits bei der Datenerhebung aufgefallen sind (Abgabe des Tests nach 1 min).</p>
-<p>Erstelle deswegen einen Filter, der diese Teilnehmenden aus allen weiteren Analysen ausschliesst.</p>
+<p>Die <strong>Teilnehmenden in Reihe 13 und 67</strong> wurde als Ausreisser gekennzeichnet. Dies allein wäre noch kein Grund für einen Ausschluss. Glücklicherweise bestätigt ein Blick in das fiktive Messprotokoll, dass diese beiden Teilnehmenden bereits bei der Datenerhebung aufgefallen sind (Abgabe des Tests nach 1 min).</p>
+<p>Erstelle deswegen einen <strong>Filter</strong>, der diese Teilnehmenden aus allen weiteren Analysen ausschliesst.</p>
 </div>
 </div>
 </div>
@@ -596,8 +598,8 @@ Bruno Rütsche
 <p><strong>Aufgabe</strong></p>
 </div>
 <div class="callout-content">
-<p>Erstelle eine Korrelationstabelle der Variablen <strong>mot_1 - mot_5</strong> (ohne Signifikanzniveau, dafür mit Signifikanzsternchen).</p>
-<p>Führe eine Reliabilitätsanalyse der gleichen Variablen durch, betrachte das Cronbach α und lasse eine Korrelations-Heatmap ausgeben.</p>
+<p>Erstelle eine <strong>Korrelationstabelle</strong> der Variablen <strong>mot_1 - mot_5 (ohne Signifikanzniveau, dafür mit Signifikanzsternchen)</strong>.</p>
+<p>Führe eine <strong>Reliabilitätsanalyse</strong> der gleichen Variablen durch, betrachte das Cronbach α und lasse eine <strong>Korrelations-Heatmap</strong> ausgeben.</p>
 </div>
 </div>
 </div>
@@ -614,7 +616,7 @@ Bruno Rütsche
 <p><strong>Aufgabe</strong></p>
 </div>
 <div class="callout-content">
-<p>Die Reliabilität der Items <strong>mot_1 - mot_5</strong> hat sich als akzeptabel herausgestellt (Cronbach α &gt; 0.70). Erstelle deshalb pro “Subject” den Mittelwert über aller Motivations-Items. Nenne die neue Variable <strong>“mot”</strong>.</p>
+<p>Die Reliabilität der Items <strong>mot_1 - mot_5</strong> hat sich als akzeptabel herausgestellt (Cronbach α &gt; 0.70). Erstelle deshalb pro “subject” den <strong>Mittelwert</strong> über alle Motivations-Items. Nenne die neue Variable <strong>“mot”</strong>.</p>
 </div>
 </div>
 </div>
@@ -643,7 +645,7 @@ Bruno Rütsche
 <p><strong>Aufgabe</strong></p>
 </div>
 <div class="callout-content">
-<p>Führe eine <strong>z-Standardisierung</strong> (Mittelwert: 0, Standardbweichung: 1) der Variable <strong>“mot”</strong> durch. Nenne die neue Variable <strong>“mot_z”</strong>.</p>
+<p>Führe eine <strong>z-Standardisierung</strong> (Mittelwert: 0, Standardabweichung: 1) der Variable <strong>“mot”</strong> durch. Nenne die neue Variable <strong>“mot_z”</strong>.</p>
 </div>
 </div>
 </div>
@@ -660,8 +662,8 @@ Bruno Rütsche
 <p><strong>Aufgabe</strong></p>
 </div>
 <div class="callout-content">
-<p>Vergleiche die beiden Gruppen in den Variablen <strong>lt_pre, lt_post, lt_post und mot_z</strong> mittels einem <strong>t-Test für unabhängige Stichproben</strong>.</p>
-<p>Lass die <strong>Effektstärke</strong> als zusätzliche Statistik ausgeben und führe den <strong>Homogenitäts und Normalverteilungs-Test</strong> durch.</p>
+<p>Vergleiche die beiden Gruppen in den Variablen <strong>lt_pre, lt_post, lt_followup und mot_z</strong> mittels einem <strong>t-Test für unabhängige Stichproben</strong>.</p>
+<p>Wähle die <strong>Effektstärke</strong> als zusätzliche Statistik und führe den <strong>Homogenitäts- und Normalverteilungs-Test</strong> durch.</p>
 </div>
 </div>
 </div>
@@ -672,7 +674,7 @@ Bruno Rütsche
 <p><strong>Hinweise</strong></p>
 </div>
 <div class="callout-content">
-<p>Kleiner Seitenhieb: In SPSS lassen sich Effektstärken bei t-Tests bis heute nicht ohne Weiteres berechnen.</p>
+<p>In SPSS lassen sich Effektstärken bei t-Tests bis heute nicht ohne Weiteres berechnen.</p>
 </div>
 </div>
 </div>
@@ -680,7 +682,7 @@ Bruno Rütsche
 </section>
 <section id="t-test-1" class="slide level2" data-visibility="uncounted">
 <h2>t-Test</h2>
-<video id="video_shortcode_videojs_video7" class="video-js vjs-default-skin vjs-fluid" controls="" preload="auto" data-setup="{}" title=""><source src="resources/t-test.mp4"></video>
+<video id="video_shortcode_videojs_video7" class="video-js vjs-default-skin vjs-fluid" controls="" preload="auto" data-setup="{}" title=""><source src="resources/t-test-edited.mp4"></video>
 </section>
 <section id="dokumentation" class="slide level2">
 <h2>Dokumentation</h2>
@@ -690,7 +692,7 @@ Bruno Rütsche
 <p><strong>Aufgabe</strong></p>
 </div>
 <div class="callout-content">
-<p>Dokumentiere den Output der eben durchgeführten t-Tests für unabhängige Stichproben. Kopiere die Tabelle mit den p-Werten in einem Microsoft-Word-Dokument.</p>
+<p>Nutze die Möglichkeiten in Jamovi, um den Output der eben durchgeführten t-Tests für unabhängige Stichproben zu dokumentieren. Kopiere die Tabelle mit den <em>p</em>-Werten in ein Microsoft-Word-Dokument.</p>
 </div>
 </div>
 </div>
@@ -704,8 +706,8 @@ Bruno Rütsche
 <div class="columns">
 <div class="column">
 <ul>
-<li class="fragment">Einzelne oder alle Analysen können über via Rechtsklick &gt; Löschen kopiert, exportiert und entfernt werden.</li>
-<li class="fragment">Bestehende Titel können editiert werden</li>
+<li>Einzelne oder alle Analysen können über via Rechtsklick kopiert, exportiert und entfernt werden.</li>
+<li>Bestehende Titel können editiert werden.</li>
 </ul>
 </div><div class="column">
 <div class="quarto-figure quarto-figure-center">
@@ -735,7 +737,7 @@ Bruno Rütsche
 </div>
 <div class="callout-content">
 <p>Führe eine <strong>“mixed” ANOVA (in Jamovi: “ANOVA mit Messwiederholung”)</strong> mit dem <strong>Innersubjekt-Faktor “time”</strong> (lt_pre, lt_post, lt_followup), dem <strong>Zwischensubject-Faktor “group”</strong> und der <strong>Kovariate “mot_z”</strong> durch.</p>
-<p>Lass die <strong>partielle η<sup>2</sup></strong> als Effektstärke ausgeben, führe <strong>Posthoc-Tests der time x group Interaktion</strong> durch und stelle die geschätzten Randmittel in einem <strong>time x group-Diagramm</strong> (inkl. beobachteter Werte) dar.</p>
+<p>Wähle das <strong>partielle η<sup>2</sup></strong> als Effektstärke, führe <strong>Posthoc-Tests der time x group Interaktion</strong> durch und stelle die geschätzten Randmittel in einem <strong>time x group-Diagramm</strong> dar.</p>
 </div>
 </div>
 </div>
@@ -770,7 +772,7 @@ Bruno Rütsche
 <section id="reproduzierbarkeit-i" class="slide level2">
 <h2>Reproduzierbarkeit I</h2>
 <ul>
-<li class="fragment"><p>Open Source: Berechnungen von Werten sind offen dokumentiert und nachvollziehbar.</p></li>
+<li class="fragment"><p>Open Source: Berechnungen von Werten sind offen dokumentiert und nachvollziehbar</p></li>
 <li class="fragment"><p>Kostenfrei: Keine Lizenzen notwendig</p></li>
 <li class="fragment"><p>Plattformunabhängig (Windows, macOS, Linux)</p></li>
 <li class="fragment"><p>Dokumentationsmöglichkeit direkt in der Software</p></li>
@@ -779,7 +781,7 @@ Bruno Rütsche
 <section id="reproduzierbarkeit-ii" class="slide level2">
 <h2>Reproduzierbarkeit II</h2>
 <ul>
-<li class="fragment">R als Basis: “Syntax”-Modus zeigt Syntax, welche nach R kopiert und ausgeführt werden kann (auch ohne Jamovi-Oberfläche)</li>
+<li class="fragment">R als Basis: “Syntaxmodus” zeigt Syntax, welche nach R kopiert und ausgeführt werden kann (auch ohne Jamovi-Oberfläche)</li>
 </ul>
 <div class="fragment">
 <div class="quarto-figure quarto-figure-center">
@@ -795,7 +797,7 @@ Bruno Rütsche
 <li class="fragment"><p>Bayes (jsq, Port von JASP)</p></li>
 <li class="fragment"><p>Power-Analysen (jpower)</p></li>
 <li class="fragment"><p>psychometrische Analysen (snowIRT, psychoPPA)</p></li>
-<li class="fragment"><p>R-Editor innerhalb von Jamovi (Rj): Möglichkeit zur sehr feinkörnigen Analysen und Darstellungen ohne Jamovi verlassen zu müssen.</p></li>
+<li class="fragment"><p>R-Editor innerhalb von Jamovi (Rj): Möglichkeit für sehr spezifische Analysen und Darstellungen ohne Jamovi verlassen zu müssen</p></li>
 <li class="fragment"><p>usw.</p></li>
 </ul>
 </section>

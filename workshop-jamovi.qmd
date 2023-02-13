@@ -193,7 +193,7 @@ ggplot(dfp, aes(x = var, y = val, color = group)) +
 
 ![](resources/jamovi-logo.png){fig-align="center" width="50%"}
 
--   [Jamovi](https://www.jamovi.org/) ist ein Spreadsheet-Programm zur statistischen Analyse ähnlich zu SPSS
+-   [Jamovi](https://www.jamovi.org/) ist ein Spreadsheet-Programm zur Durchführung von statistischenjam Analyse ähnlich zu SPSS
 
 -   Vorteile: Open Source, kostenfrei, integrierte Dokumentation, modernes GUI, Integration mit R
 
@@ -259,6 +259,9 @@ Kurze Demonstration...
 <!-- ::: -->
 
 <!-- ::: -->
+
+Aufbau GUI
+-   Spreadsheet, Output, Menu, Hamburger-Menu, Settings
 
 Variablen
 
@@ -355,9 +358,11 @@ Hamburger-Menu, Options-Menu
 
 ## Ablauf
 
--   keine Statistikeinführung, sondern eigenständiges "Hands-On"
+-   eigenständiges "Hands-On"
 
 -   Aufgaben, Hinweise und Video-Lösungen
+
+-   keine Statistikeinführung (Literaturempfehlung am Schluss)
 
 -   Bei Fragen bitte melden.
 
@@ -370,7 +375,7 @@ Hamburger-Menu, Options-Menu
 ::: {.callout-note icon="false"}
 ### Aufgabe
 
-Importiere die Excel-Datei "data.xlsx" in Jamovi, setze Beschreibungen, Skalentypen und Stufen aller Variablen und speichere den Datensatz.
+Importiere die Excel-Datei "data.xlsx" in Jamovi, setze Beschreibungen, Skalentypen und Stufen aller Variablen und speichere es als Jamovi-Datei (*.omv).
 :::
 
 . . .
@@ -392,7 +397,7 @@ Importiere die Excel-Datei "data.xlsx" in Jamovi, setze Beschreibungen, Skalenty
 ::: {.callout-note icon="false"}
 ### Aufgabe
 
-Erstelle für die Variablen **lt_pre, lt_post, lt_followup und mot_1 - mot_5** eine Tabelle mit **deskriptiven Statistiken** (Standardeinstellung plus *Modalwert*) sowie ein **Box-Plots (inkl. Ausreisser, Violin-Plot und Daten)**.
+Erstelle für die Variablen **lt_pre, lt_post, lt_followup und mot_1 - mot_5** eine Tabelle mit **deskriptiven Statistiken** (Standardeinstellung plus *Modalwert*) sowie **Box-Plots (inkl. Ausreisser, Violin-Plot und Daten)**.
 :::
 
 . . .
@@ -414,9 +419,9 @@ Erstelle für die Variablen **lt_pre, lt_post, lt_followup und mot_1 - mot_5** e
 ::: {.callout-note icon="false"}
 ### Aufgabe
 
-Die Teilnehmenden in Reihe 13 und 67 wurde als Ausreisser gekennzeichnet. Dies allein wäre noch kein Grund für einen Ausschluss. Glücklicherweise bestätigt ein Blick in das fiktive Messprotokoll, dass diese beiden Teilnehmenden bereits bei der Datenerhebung aufgefallen sind (Abgabe des Tests nach 1 min).
+Die **Teilnehmenden in Reihe 13 und 67** wurde als Ausreisser gekennzeichnet. Dies allein wäre noch kein Grund für einen Ausschluss. Glücklicherweise bestätigt ein Blick in das fiktive Messprotokoll, dass diese beiden Teilnehmenden bereits bei der Datenerhebung aufgefallen sind (Abgabe des Tests nach 1 min).
 
-Erstelle deswegen einen Filter, der diese Teilnehmenden aus allen weiteren Analysen ausschliesst.
+Erstelle deswegen einen **Filter**, der diese Teilnehmenden aus allen weiteren Analysen ausschliesst.
 :::
 
 ## Filter {visibility="uncounted"}
@@ -428,9 +433,9 @@ Erstelle deswegen einen Filter, der diese Teilnehmenden aus allen weiteren Analy
 ::: {.callout-note icon="false"}
 ### Aufgabe
 
-Erstelle eine Korrelationstabelle der Variablen **mot_1 - mot_5** (ohne Signifikanzniveau, dafür mit Signifikanzsternchen).
+Erstelle eine **Korrelationstabelle** der Variablen **mot_1 - mot_5 (ohne Signifikanzniveau, dafür mit Signifikanzsternchen)**.
 
-Führe eine Reliabilitätsanalyse der gleichen Variablen durch, betrachte das Cronbach α und lasse eine Korrelations-Heatmap ausgeben.
+Führe eine **Reliabilitätsanalyse** der gleichen Variablen durch, betrachte das Cronbach α und lasse eine **Korrelations-Heatmap** ausgeben.
 :::
 
 ## Korrelationen {visibility="uncounted"}
@@ -442,7 +447,7 @@ Führe eine Reliabilitätsanalyse der gleichen Variablen durch, betrachte das Cr
 ::: {.callout-note icon="false"}
 ### Aufgabe
 
-Die Reliabilität der Items **mot_1 - mot_5** hat sich als akzeptabel herausgestellt (Cronbach α \> 0.70). Erstelle deshalb pro "Subject" den Mittelwert über aller Motivations-Items. Nenne die neue Variable **"mot"**.
+Die Reliabilität der Items **mot_1 - mot_5** hat sich als akzeptabel herausgestellt (Cronbach α \> 0.70). Erstelle deshalb pro "subject" den **Mittelwert** über alle Motivations-Items. Nenne die neue Variable **"mot"**.
 :::
 
 . . .
@@ -462,7 +467,7 @@ Der Skalenmittelwert liesse sich auch direkt bei der Reliabilitätsanalyse speic
 ::: {.callout-note icon="false"}
 ### Aufgabe
 
-Führe eine **z-Standardisierung** (Mittelwert: 0, Standardbweichung: 1) der Variable **"mot"** durch. Nenne die neue Variable **"mot_z"**.
+Führe eine **z-Standardisierung** (Mittelwert: 0, Standardabweichung: 1) der Variable **"mot"** durch. Nenne die neue Variable **"mot_z"**.
 :::
 
 ## Daten transformieren: z-Standardisierung {visibility="uncounted"}
@@ -474,9 +479,9 @@ Führe eine **z-Standardisierung** (Mittelwert: 0, Standardbweichung: 1) der Var
 ::: {.callout-note icon="false"}
 ### Aufgabe
 
-Vergleiche die beiden Gruppen in den Variablen **lt_pre, lt_post, lt_post und mot_z** mittels einem **t-Test für unabhängige Stichproben**.
+Vergleiche die beiden Gruppen in den Variablen **lt_pre, lt_post, lt_followup und mot_z** mittels einem **t-Test für unabhängige Stichproben**.
 
-Lass die **Effektstärke** als zusätzliche Statistik ausgeben und führe den **Homogenitäts und Normalverteilungs-Test** durch.
+Wähle die **Effektstärke** als zusätzliche Statistik und führe den **Homogenitäts- und Normalverteilungs-Test** durch.
 :::
 
 . . .
@@ -484,19 +489,19 @@ Lass die **Effektstärke** als zusätzliche Statistik ausgeben und führe den **
 ::: {.callout-tip icon="false"}
 ### Hinweise
 
-Kleiner Seitenhieb: In SPSS lassen sich Effektstärken bei t-Tests bis heute nicht ohne Weiteres berechnen.
+In SPSS lassen sich Effektstärken bei t-Tests bis heute nicht ohne Weiteres berechnen.
 :::
 
 ## t-Test {visibility="uncounted"}
 
-{{< video resources/t-test.mp4 >}}
+{{< video resources/t-test-edited.mp4 >}}
 
 ## Dokumentation
 
 ::: {.callout-note icon="false"}
 ### Aufgabe
 
-Dokumentiere den Output der eben durchgeführten t-Tests für unabhängige Stichproben. Kopiere die Tabelle mit den p-Werten in einem Microsoft-Word-Dokument.
+Nutze die Möglichkeiten in Jamovi, um den Output der eben durchgeführten t-Tests für unabhängige Stichproben zu dokumentieren. Kopiere die Tabelle mit den *p*-Werten in ein Microsoft-Word-Dokument.
 :::
 
 . . .
@@ -505,12 +510,12 @@ Dokumentiere den Output der eben durchgeführten t-Tests für unabhängige Stich
 ### Hinweise
 
 ::: columns
-::: column
--   Einzelne oder alle Analysen können über via Rechtsklick \> Löschen kopiert, exportiert und entfernt werden.
--   Bestehende Titel können editiert werden
+::: {.column .nonincremental}
+-   Einzelne oder alle Analysen können über via Rechtsklick kopiert, exportiert und entfernt werden.
+-   Bestehende Titel können editiert werden.
 :::
 
-::: column
+::: {.column .nonincremental}
 ![](resources/output-loeschen.png){fig-align="center"}
 :::
 :::
@@ -531,7 +536,7 @@ Dokumentiere den Output der eben durchgeführten t-Tests für unabhängige Stich
 
 Führe eine **"mixed" ANOVA (in Jamovi: "ANOVA mit Messwiederholung")** mit dem **Innersubjekt-Faktor "time"** (lt_pre, lt_post, lt_followup), dem **Zwischensubject-Faktor "group"** und der **Kovariate "mot_z"** durch.
 
-Lass die **partielle η^2^** als Effektstärke ausgeben, führe **Posthoc-Tests der time x group Interaktion** durch und stelle die geschätzten Randmittel in einem **time x group-Diagramm** (inkl. beobachteter Werte) dar.
+Wähle das **partielle η^2^** als Effektstärke, führe **Posthoc-Tests der time x group Interaktion** durch und stelle die geschätzten Randmittel in einem **time x group-Diagramm** dar.
 :::
 
 ## ANOVA {visibility="uncounted"}
@@ -556,7 +561,7 @@ Installiere das Plugin **"flexplot"** und erstelle einen **Scatterplot zwischen 
 
 ## Reproduzierbarkeit I
 
--   Open Source: Berechnungen von Werten sind offen dokumentiert und nachvollziehbar.
+-   Open Source: Berechnungen von Werten sind offen dokumentiert und nachvollziehbar
 
 -   Kostenfrei: Keine Lizenzen notwendig
 
@@ -566,7 +571,7 @@ Installiere das Plugin **"flexplot"** und erstelle einen **Scatterplot zwischen 
 
 ## Reproduzierbarkeit II
 
--   R als Basis: "Syntax"-Modus zeigt Syntax, welche nach R kopiert und ausgeführt werden kann (auch ohne Jamovi-Oberfläche)
+-   R als Basis: "Syntaxmodus" zeigt Syntax, welche nach R kopiert und ausgeführt werden kann (auch ohne Jamovi-Oberfläche)
 
 . . .
 
@@ -580,7 +585,7 @@ Installiere das Plugin **"flexplot"** und erstelle einen **Scatterplot zwischen 
 
 -   psychometrische Analysen (snowIRT, psychoPPA)
 
--   R-Editor innerhalb von Jamovi (Rj): Möglichkeit zu feinkörnigen Analysen und Darstellungen ohne Jamovi verlassen zu müssen
+-   R-Editor innerhalb von Jamovi (Rj): Möglichkeit für sehr spezifische Analysen und Darstellungen ohne Jamovi verlassen zu müssen
 
 -   usw.
 
